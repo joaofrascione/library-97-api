@@ -8,7 +8,7 @@ const Book = require('../models/Book.model');
 // rotas
 
 //CRUD - > create
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     const { title, description, author, rating } = req.body;
     try{
         if(!title) {
@@ -23,30 +23,59 @@ router.post('/', async (req, res) => {
         res.status(200).json(newBookFromDB);
 
     } catch (error){
-        res.status(error.code || 500).json({ error });
+        next(error);
     }
 })
 
 //CRUD - > read
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
+    const { page, limit } = req.query;
     try {
-        const booksFromDB = await Book.find();
+        const booksFromDB = await Book.find().limit(limit).skip(limit * (page - 1));
         res.status(200).json(booksFromDB);
     } catch (error) {
-        res.status(500).json({description: 'Erro ao listar livros', error });
+        next(error);
     }
 })
 
-router.get('/:bookId', async (req, res) => {
+router.get('/:bookId', async (req, res, next) => {
     const { bookId } = req.params;
     try {
         const bookFromDB = await Book.findById(bookId);
         res.status(200).json(bookFromDB)
     } catch (error) {
-        next();
+    next(error);
     }
 })
 
+
+// crUd -> update
+router.put('/:bookId', async (req, res, next)=>{
+    const { bookId } = req.params;
+    try {
+        const bookFromDB = await Book.findByIdAndUpdate(bookId, req.body, {new: true});
+        res.status(200).json(bookFromDB);
+    } catch (error) {
+        next(error);
+    }
+})
+
+// cruD -> Delete;
+router.delete('/bookId', async (req, res, next) =>{
+    const { bookId } = req.params;
+    try {
+        await Book.findByIdAndRemove(bookId);
+        res.status(204).json();
+    } catch (error) {
+        next(error);
+        
+    }
+})
+
+//teste
+router.get('/test', (req, res, next) => {
+    res.json('Rota de BOOKS com sucesso!');
+})
 
 // exportando rotas
 module.exports = router;
