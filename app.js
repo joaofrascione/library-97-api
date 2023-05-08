@@ -17,6 +17,7 @@ require ('./configs')(app);
 //rotas
 // const bookRoutes = require('./routes/book.routes');
 app.use('/books', require('./routes/book.routes'));
+app.use('/User', require('./routes/user.routes'));
 
 // gerenciamento de erros
 app.use((req, res) => {

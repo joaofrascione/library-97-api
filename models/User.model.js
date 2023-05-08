@@ -3,7 +3,7 @@ const { model, Schema } = require('mongoose');
 const userSchema = new Schema ({
     username: {
         type: String,
-        required: true,
+        required: [true, 'Nome é obrigatorio'],
         unique: true,
         trim: true
     },
@@ -12,6 +12,7 @@ const userSchema = new Schema ({
           ref: 'Book'
         }
     
+        
 
 }, { timestamps: true })
 
